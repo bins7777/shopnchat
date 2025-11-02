@@ -1,0 +1,17 @@
+{
+  "cli": {
+    "version": ">= 5.9.1"
+  },
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "distribution": "internal",
+      "env": {
+        "ANDROID_SDK_ROOT": "C:\\Users\\Cyril\\AppData\\Local\\Android\\Sdk"
+      }
+    }
+  }
+}

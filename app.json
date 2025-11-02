@@ -1,0 +1,69 @@
+{
+  "expo": {
+    "name": "ShopNChat",
+    "slug": "shopnchat",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/shopnchat-app-icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "mobile.marketplace",
+      "googleServicesFile": "./google-services.json",
+      "adaptiveIcon": {
+        "backgroundColor": "#E8F5E2",
+        "foregroundImage": "./assets/images/shopnchat-app-icon.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#EAF9F2",
+      "dark": {
+        "image": "./assets/images/splash-icon.png",
+        "backgroundColor": "#103B2A"
+      }
+    },
+    "web": {
+      "output": "static",
+      "favicon": "./assets/images/shopnchat-logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#EAF9F2",
+          "dark": {
+            "image": "./assets/images/splash-icon.png",
+            "backgroundColor": "#103B2A",
+            "resizeMode": "contain"
+          }
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "supabase": {
+        "url": "https://ovhduawqrzwefokoeyqt.supabase.co",
+        "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92aGR1YXdxcnp3ZWZva29leXF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4MjU4NjUsImV4cCI6MjA3NzQwMTg2NX0.nvsc8AG_2rs5o0xUkdQBVPPyaCcs_JqsC3r7LnXbtMs",
+        "storageBucket": "avatars"
+      },
+      "router": {},
+      "eas": {
+        "projectId": "bfb0bbb3-984b-4a9b-984a-66941c1dffc1"
+      }
+    }
+  }
+}

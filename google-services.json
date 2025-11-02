@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "512509214728",
+    "project_id": "mobile-computing-db",
+    "storage_bucket": "mobile-computing-db.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:512509214728:android:c0bf9d6f4349e3e12291bd",
+        "android_client_info": {
+          "package_name": "mobile.marketplace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAi_6yFURsYnnARfrPxGofSYp0OzskUBMU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
