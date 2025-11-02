@@ -1,6 +1,7 @@
 import type { PostgrestError, RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 
 import { supabase } from '@/config/supabase';
+import { ensureUserProfileExists } from '@/lib/user-profile';
 import { extractMissingColumnName } from '@/lib/supabase-errors';
 
 export const MARKETPLACE_CURRENCY = 'PHP';
@@ -482,6 +483,13 @@ export const createListing = async (
   }
 
   try {
+    const profileReady = await ensureUserProfileExists({ id: sellerId });
+    if (!profileReady) {
+      throw new Error(
+        'Your seller profile is still synchronising. Please try again in a moment.',
+      );
+    }
+
     const payload = sanitiseListingPayload(sellerId, input);
     const { data, error } = await supabase
       .from(TABLE_LISTINGS)

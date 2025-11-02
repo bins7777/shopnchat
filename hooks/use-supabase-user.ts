@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
-import { supabase } from '@/config/supabase';
+import { supabase, signOutSafely, isInvalidRefreshTokenError } from '@/config/supabase';
 
 type UseSupabaseUserResult = {
   user: SupabaseUser | null;
@@ -40,11 +40,20 @@ export const useSupabaseUser = (): UseSupabaseUserResult => {
       setUser(data.user ?? null);
     } catch (refreshError: unknown) {
       console.warn('Unable to load Supabase auth user', refreshError);
-      setError(
-        refreshError instanceof Error
-          ? refreshError.message
-          : 'Unable to load auth user. Please try again.',
-      );
+      if (isInvalidRefreshTokenError(refreshError)) {
+        try {
+          await signOutSafely('local');
+        } catch (signOutError) {
+          console.warn('Supabase sign-out after refresh failure threw', signOutError);
+        }
+        setError('Your session expired. Please sign in again.');
+      } else {
+        setError(
+          refreshError instanceof Error
+            ? refreshError.message
+            : 'Unable to load auth user. Please try again.',
+        );
+      }
       setUser(null);
     } finally {
       setLoading(false);

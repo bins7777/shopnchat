@@ -22,6 +22,7 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import { supabase } from '@/config/supabase';
 import { useSupabaseUser } from '@/hooks/use-supabase-user';
 import { parseMessageBody } from '@/lib/messages';
+import { ensureUserProfileExists } from '@/lib/user-profile';
 
 const MESSAGE_MEDIA_BUCKET = 'Images-Videos-Message';
 
@@ -352,6 +353,12 @@ export default function ConversationScreen() {
 
     try {
       setFollowBusy(true);
+      const hasProfile = await ensureUserProfileExists(user);
+
+      if (!hasProfile) {
+        throw new Error('Your account profile is still being prepared. Please try again in a moment.');
+      }
+
       const { error } = await supabase.from('user_follows').insert({
         follower_id: user.id,
         followed_id: targetUserId,
@@ -445,6 +452,11 @@ export default function ConversationScreen() {
 
     try {
       setSending(true);
+      const profileReady = await ensureUserProfileExists(user);
+      if (!profileReady) {
+        throw new Error('Your profile is still being prepared. Please try again in a moment.');
+      }
+
       const { data, error } = await supabase
         .from('messages')
         .insert({

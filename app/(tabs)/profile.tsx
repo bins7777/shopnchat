@@ -42,6 +42,7 @@ import type {
   OrderRecord,
   ReviewMedia,
 } from '@/lib/marketplace';
+import { ensureUserProfileExists } from '@/lib/user-profile';
 import { formatCurrency, parsePriceInput } from '@/utils/currency';
 
 type ProfileActionConfig = {
@@ -797,6 +798,13 @@ export default function ProfileScreen() {
     setListingFeedback(null);
 
     try {
+      const profileReady = await ensureUserProfileExists(supabaseUser);
+
+      if (!profileReady) {
+        setListingError('Your profile is still being prepared. Please try again in a moment.');
+        return;
+      }
+
       const manualUrl = (listingForm.imageUrl || '').trim();
       const combinedImages = [
         ...listingImages,

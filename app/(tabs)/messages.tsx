@@ -18,6 +18,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { supabase } from '@/config/supabase';
 import { useSupabaseUser } from '@/hooks/use-supabase-user';
 import { describeMessagePreview } from '@/lib/messages';
+import { ensureUserProfileExists } from '@/lib/user-profile';
 
 type UserProfile = {
   id: string;
@@ -342,6 +343,12 @@ export default function MessagesScreen() {
 
       try {
         setActionTargetId(targetId);
+        const hasProfile = await ensureUserProfileExists(user);
+
+        if (!hasProfile) {
+          throw new Error('Your account profile is still being prepared. Please try again in a moment.');
+        }
+
         const { error } = await supabase
           .from('user_follows')
           .insert({

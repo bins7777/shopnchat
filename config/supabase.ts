@@ -41,9 +41,13 @@ const createWebSSRStorage = (): StorageAdapterLike => {
 type SignOutScope = 'global' | 'local' | 'others';
 
 const JSON_PARSE_ERROR_PATTERN = /JSON Parse error/i;
+const INVALID_REFRESH_TOKEN_PATTERN = /Invalid Refresh Token/i;
 
 const isJsonParseError = (error: unknown) =>
   error instanceof Error && JSON_PARSE_ERROR_PATTERN.test(error.message);
+
+const isInvalidRefreshTokenError = (error: unknown) =>
+  error instanceof Error && INVALID_REFRESH_TOKEN_PATTERN.test(error.message);
 
 const getLogoutUrl = (scope: SignOutScope) => {
   if (!supabaseExtra?.url) {
@@ -91,6 +95,27 @@ const clearSupabaseAuthStorage = async () => {
     ]);
   } catch (storageError) {
     console.warn('Supabase auth storage cleanup failed', storageError);
+  }
+};
+
+const handleInvalidRefreshToken = async (cause?: unknown) => {
+  console.warn('Supabase refresh token appears to be invalid. Clearing local session.', cause);
+
+  await clearSupabaseAuthStorage();
+
+  if (!supabase) {
+    return;
+  }
+
+  try {
+    await supabase.auth.signOut({ scope: 'local' });
+  } catch (signOutError) {
+    if (
+      !isJsonParseError(signOutError) &&
+      !isInvalidRefreshTokenError(signOutError)
+    ) {
+      console.warn('Supabase signOut after refresh token failure also failed', signOutError);
+    }
   }
 };
 
@@ -148,6 +173,11 @@ const signOutSafely = async (scope: SignOutScope = 'global') => {
     return;
   }
 
+  if (isInvalidRefreshTokenError(error)) {
+    await handleInvalidRefreshToken(error);
+    return;
+  }
+
   if (!isJsonParseError(error)) {
     throw error;
   }
@@ -179,6 +209,12 @@ if (!supabaseExtra?.url || !supabaseExtra.anonKey) {
   });
 
   storageBucket = supabaseExtra.storageBucket || 'avatars';
+
+  supabase.auth.onAuthStateChange((event) => {
+    if ((event as string) === 'TOKEN_REFRESH_FAILED') {
+      handleInvalidRefreshToken(event);
+    }
+  });
 }
 
-export { supabase, storageBucket, signOutSafely };
+export { supabase, storageBucket, signOutSafely, isInvalidRefreshTokenError };
